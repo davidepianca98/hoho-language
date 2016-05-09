@@ -5,6 +5,21 @@ void print_help() {
     printf("Usage: parser <filename>\n");
 }
 
+void print(char *line) {
+    char *word = strchr(line, ' ') + 1;
+    printf("%s", word);
+}
+
+void command(char *line) {
+    char *line2;
+    line2 = strdup(line);
+    char *command = strtok(line, " ");
+    
+    if(strcmp(command, "print") == 0) {
+        print(line2);
+    }
+}
+
 int main(int argc, char **argv) {
     
     if(argc < 2) {
@@ -16,14 +31,8 @@ int main(int argc, char **argv) {
     if(f) {
         // file exists, start parsing
         char line[100];
-        char *line2;
         while(fgets(line, sizeof(line), f) != NULL) {
-            line2 = strdup(line);
-            char *command = strtok(line, " ");
-            if(strcmp(command, "print") == 0) {
-                char *word = strchr(line2, ' ') + 1;
-                printf("%s", word);
-            }
+            command(line);
         }
     } else {
         // file doesn't exist
