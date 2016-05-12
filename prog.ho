@@ -1,1 +1,4 @@
-print Hello world
+var number
+number = 5
+
+print number
