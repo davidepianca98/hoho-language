@@ -5,28 +5,26 @@
 #include "list.h"
 #include "variables.h"
 
+char line_words[5][MAX_STRING];
+
 void print_help() {
     printf("Usage: parser <filename>\n");
 }
 
-void savevar(char *line) {
+void savevar() {
     var *variable = (var *) malloc(sizeof(var));
-    char *name = strchr(line, ' ') + 1;
-    // remove the \n at the end from fgets
-    name[strcspn(name, "\n")] = 0;
-    strcpy(variable->name, name);
+    strcpy(variable->name, line_words[1]);
     list_add(variable);
 }
 
-void variable_op(var *variable, char *line) {
+void variable_op(var *variable) {
     // check if it's an assignment
-    if(strncmp(strchr(line, '='), "=", 1) == 0) {
-        variable->integer = atoi(strchr(line, '=') + 2);
+    if(strncmp(line_words[1], "=", 1) == 0) {
+        variable->integer = atoi(line_words[2]);
     }
 }
 
-void print(char *line) {
-    char *word = strchr(line, ' ') + 1;
+void print(char *word) {
     var *vari = list_search(word);
     if(vari) {
         // variable with that name exists, just print the value
@@ -37,19 +35,27 @@ void print(char *line) {
 }
 
 void command(char *line) {
+    // remove the \n at the end from fgets
+    line[strcspn(line, "\n")] = 0;
     char *line2;
-    line2 = strdup(line);
-    char *command = strtok(line, " ");
+    int i = 0;
     
-    if(strcmp(command, "print") == 0) {
-        print(line2);
-    } else if(strcmp(command, "var") == 0) {
-        savevar(line2);
+    line2 = strtok(line, " ");
+    while(line2 != NULL) {
+        strcpy(line_words[i], line2);
+        line2 = strtok(NULL, " ");
+        i++;
+    }
+    
+    if(strcmp(line_words[0], "print") == 0) {
+        print(line_words[1]);
+    } else if(strcmp(line_words[0], "var") == 0) {
+        savevar();
     } else {
         // no command found, maybe it's a variable operation
-        var *vari = list_search(command);
+        var *vari = list_search(line_words[0]);
         if(vari) {
-            variable_op(vari, line2);
+            variable_op(vari);
         }
     }
 }
