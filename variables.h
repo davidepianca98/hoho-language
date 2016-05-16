@@ -9,7 +9,6 @@ typedef struct {
     char name[MAX_STRING];
     int integer;
     float floating;
-    char character;
     char string[MAX_STRING];
 } var;
 
